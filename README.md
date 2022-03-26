@@ -1,6 +1,6 @@
 # Tauri Update Server: Cloudflare
 
-Much credit to @lemarier for the underlying logic at https://github.com/lemarier/updater-deno
+Much credit to [@lemarier](https://github.com/lemarier) for the underlying logic at https://github.com/lemarier/updater-deno
 
 ## Cloudflare Wrangler
 
