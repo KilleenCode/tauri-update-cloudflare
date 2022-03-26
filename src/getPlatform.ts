@@ -63,9 +63,14 @@ export async function findAssetSignature(
 ): Promise<string | null> {
   // check in our assets if we have a file: `fileName.sig`
   // by example fileName can be: App-1.0.0.zip
-
-  const foundSignature = assets.find(
-    (asset) => asset.name.toLowerCase() === `${fileName.toLowerCase()}.sig`,
+  console.log('matching: ', fileName)
+  console.log(assets.map((a) => a.name))
+  const matches = [
+    `${fileName.toLowerCase()}.gz.sig`,
+    `${fileName.toLowerCase()}.zip.sig`,
+  ]
+  const foundSignature = assets.find((asset) =>
+    matches.includes(asset.name.toLowerCase()),
   )
 
   if (!foundSignature) {
