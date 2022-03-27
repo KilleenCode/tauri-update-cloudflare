@@ -12,9 +12,7 @@ const GITHUB_REPO = 'brancato'
 export async function handleRequest(request: Request): Promise<Response> {
   const path = new URL(request.url).pathname
   const [platform, version] = path.slice(1).split('/')
-  if (!platform || !validatePlatform(platform) || !version) {
-    return new Response('Not found', { status: 404 })
-  }
+
   const reqUrl = new URL(
     `https://api.github.com/repos/${GITHUB_ACCOUNT}/${GITHUB_REPO}/releases/latest`,
   )
@@ -22,16 +20,20 @@ export async function handleRequest(request: Request): Promise<Response> {
     Accept: 'application/vnd.github.preview',
     'User-Agent': request.headers.get('User-Agent') as string,
   })
-  const release = (await fetch(reqUrl.toString(), {
+  const releaseResponse = await fetch(reqUrl.toString(), {
     method: 'GET',
     headers,
-  }).then((resp) => resp.json())) as {
+  })
+
+  const release = (await releaseResponse.clone().json()) as {
     tag_name: string
     assets: any
     body: any
     published_at: string
   }
-
+  if (!platform || !validatePlatform(platform) || !version) {
+    return releaseResponse
+  }
   const remoteVersion = sanitizeVersion(release.tag_name.toLowerCase())
 
   if (!remoteVersion || !semverValid(remoteVersion)) {

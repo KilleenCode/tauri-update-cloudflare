@@ -13,7 +13,6 @@ export function checkPlatform(
   fileName: string,
 ): string | undefined {
   const extension = extname(fileName)
-
   // OSX we should have our .app tar.gz
   if (
     (fileName.includes('.app') ||
@@ -28,7 +27,7 @@ export function checkPlatform(
   // Windows 64 bits
   if (
     (fileName.includes('x64') || fileName.includes('win64')) &&
-    (extension === 'zip' || extension === 'msi') &&
+    extension === 'zip' &&
     platform === AVAILABLE_PLATFORMS.Win64
   ) {
     return 'win64'
@@ -63,8 +62,6 @@ export async function findAssetSignature(
 ): Promise<string | null> {
   // check in our assets if we have a file: `fileName.sig`
   // by example fileName can be: App-1.0.0.zip
-  console.log('matching: ', fileName)
-  console.log(assets.map((a) => a.name))
   const matches = [
     `${fileName.toLowerCase()}.gz.sig`,
     `${fileName.toLowerCase()}.zip.sig`,
