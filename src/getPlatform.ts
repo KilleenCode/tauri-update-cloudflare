@@ -59,24 +59,24 @@ function extname(filename: string) {
 export async function findAssetSignature(
   fileName: string,
   assets: any[],
-): Promise<string | null> {
+): Promise<string | undefined> {
   // check in our assets if we have a file: `fileName.sig`
   // by example fileName can be: App-1.0.0.zip
   const matches = [
     `${fileName.toLowerCase()}.gz.sig`,
-    `${fileName.toLowerCase()}.zip.sig`,
+    `${fileName.toLowerCase()}.sig`,
   ]
   const foundSignature = assets.find((asset) =>
-    matches.includes(asset.name.toLowerCase()),
+    asset.name.toLowerCase() === `${fileName.toLowerCase()}.sig`,
   )
 
   if (!foundSignature) {
-    return null
+    return undefined
   }
 
   const response = await fetch(foundSignature.browser_download_url)
   if (response.status !== 200) {
-    return null
+    return undefined
   }
   const signature = await response.text()
   return signature

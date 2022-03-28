@@ -7,6 +7,15 @@ import {
 import semverValid from 'semver/functions/valid'
 import semverGt from 'semver/functions/gt'
 
+
+type TauriUpdateResponse = {
+  url: string,
+  version: string,
+  notes?: string,
+  pub_date?: string,
+  signature?: string
+}
+
 const GITHUB_ACCOUNT = 'killeencode'
 const GITHUB_REPO = 'brancato'
 export async function handleRequest(request: Request): Promise<Response> {
@@ -39,6 +48,7 @@ export async function handleRequest(request: Request): Promise<Response> {
   if (!remoteVersion || !semverValid(remoteVersion)) {
     return new Response('Not found', { status: 404 })
   }
+  
   const shouldUpdate = semverGt(remoteVersion, version)
   if (!shouldUpdate) {
     return new Response(null, { status: 204 })
@@ -53,15 +63,15 @@ export async function handleRequest(request: Request): Promise<Response> {
 
     // try to find signature for this asset
     const signature = await findAssetSignature(name, release.assets)
-
+    const data : TauriUpdateResponse = {
+      url: browser_download_url,
+      version: remoteVersion,
+      notes: release.body,
+      pub_date: release.published_at,
+      signature,
+    }
     return new Response(
-      JSON.stringify({
-        name: release.tag_name,
-        notes: release.body,
-        pub_date: release.published_at,
-        signature,
-        url: browser_download_url,
-      }),
+      JSON.stringify(data),
       { headers: { 'Content-Type': 'application/json; charset=utf-8' } },
     )
   }
