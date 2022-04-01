@@ -6,6 +6,10 @@ route = ""
 workers_dev = true
 compatibility_date = "2022-03-26"
 
+[vars]
+GITHUB_ACCOUNT = 'killeencode'
+GITHUB_REPO = 'brancato'
+
 [build]
 command = "npm install && npm run build"
 [build.upload]
