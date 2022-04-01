@@ -1,5 +1,7 @@
 # Tauri Update Server: Cloudflare
 
+[![Deploy to Cloudflare Workers](https://deploy.workers.cloudflare.com/button)](https://deploy.workers.cloudflare.com/?url=https://github.com/killeencode/tauri-update-cloudflare)
+
 Much credit to [@lemarier](https://github.com/lemarier) for the underlying logic at https://github.com/lemarier/updater-deno
 
 ## Cloudflare Wrangler
