@@ -1,4 +1,4 @@
-name = "tauri-update-cloudflare-1"
+name = "tauri-update-server"
 type = "javascript"
 zone_id = ""
 account_id = ""
