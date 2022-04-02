@@ -1,82 +1,86 @@
-import {
-  Asset,
-  checkPlatform,
-  findAssetSignature,
-  sanitizeVersion,
-  validatePlatform,
-} from './getPlatform'
+import { testAsset } from './getPlatform'
 import semverValid from 'semver/functions/valid'
 import semverGt from 'semver/functions/gt'
-
-type TauriUpdateResponse = {
-  url: string
-  version: string
-  notes?: string
-  pub_date?: string
-  signature?: string
-}
+import { AVAILABLE_ARCHITECTURES, AVAILABLE_PLATFORMS } from './constants'
+import { handleLegacyRequest } from './legacy/handler'
+import { findAssetSignature, getLatestRelease } from './services/github'
+import { TauriUpdateResponse } from './types'
+import { sanitizeVersion } from './utils/versioning'
 
 declare global {
   const GITHUB_ACCOUNT: string
   const GITHUB_REPO: string
 }
 
+const responses = {
+  NotFound: () => new Response('Not found', { status: 404 }),
+  NoContent: () => new Response(null, { status: 204 }),
+  SendUpdate: (data: TauriUpdateResponse) =>
+    new Response(JSON.stringify(data), {
+      headers: { 'Content-Type': 'application/json; charset=utf-8' },
+    }),
+}
+
+type RequestPathParts = [
+  string,
+  AVAILABLE_PLATFORMS,
+  AVAILABLE_ARCHITECTURES,
+  string,
+]
+const handleV1Request = async (request: Request) => {
+  const path = new URL(request.url).pathname
+  const [, target, arch, appVersion] = path
+    .slice(1)
+    .split('/') as RequestPathParts
+
+  if (!target || !arch || !appVersion || !semverValid(appVersion)) {
+    return responses.NotFound()
+  }
+  const release = await getLatestRelease(request)
+
+  const remoteVersion = sanitizeVersion(release.tag_name.toLowerCase())
+  if (!remoteVersion || !semverValid(remoteVersion)) {
+    return responses.NotFound()
+  }
+
+  const shouldUpdate = semverGt(remoteVersion, appVersion)
+  if (!shouldUpdate) {
+    return responses.NoContent()
+  }
+
+  const match = release.assets.find(({ name }) => {
+    const test = testAsset(target, arch, name)
+
+    return test
+  })
+
+  if (typeof match === 'undefined') {
+    return responses.NotFound()
+  }
+
+  const signature = await findAssetSignature(match.name, release.assets)
+  const data: TauriUpdateResponse = {
+    url: match.browser_download_url,
+    version: remoteVersion,
+    notes: release.body,
+    pub_date: release.published_at,
+    signature,
+  }
+
+  return responses.SendUpdate(data)
+}
+
 export async function handleRequest(request: Request): Promise<Response> {
   const path = new URL(request.url).pathname
-  const [platform, version] = path.slice(1).split('/')
+  const version = path.slice(1).split('/')[0]
 
-  const reqUrl = new URL(
-    `https://api.github.com/repos/${GITHUB_ACCOUNT}/${GITHUB_REPO}/releases/latest`,
-  )
-  const headers = new Headers({
-    Accept: 'application/vnd.github.preview',
-    'User-Agent': request.headers.get('User-Agent') as string,
-  })
-  const releaseResponse = await fetch(reqUrl.toString(), {
-    method: 'GET',
-    headers,
-  })
-
-  const release = (await releaseResponse.clone().json()) as {
-    tag_name: string
-    assets: Asset[]
-    body: string
-    published_at: string
-  }
-  if (!platform || !validatePlatform(platform) || !version) {
-    return releaseResponse
-  }
-  const remoteVersion = sanitizeVersion(release.tag_name.toLowerCase())
-
-  if (!remoteVersion || !semverValid(remoteVersion)) {
-    return new Response('Not found', { status: 404 })
-  }
-
-  const shouldUpdate = semverGt(remoteVersion, version)
-  if (!shouldUpdate) {
-    return new Response(null, { status: 204 })
-  }
-
-  for (const asset of release.assets) {
-    const { name, browser_download_url } = asset
-    const findPlatform = checkPlatform(platform, name)
-    if (!findPlatform) {
-      continue
+  if (version.includes('v')) {
+    switch (version) {
+      case 'v1':
+      default:
+        return handleV1Request(request)
     }
-
-    // try to find signature for this asset
-    const signature = await findAssetSignature(name, release.assets)
-    const data: TauriUpdateResponse = {
-      url: browser_download_url,
-      version: remoteVersion,
-      notes: release.body,
-      pub_date: release.published_at,
-      signature,
-    }
-    return new Response(JSON.stringify(data), {
-      headers: { 'Content-Type': 'application/json; charset=utf-8' },
-    })
   }
 
-  return new Response(JSON.stringify({ remoteVersion, version, shouldUpdate }))
+  return handleLegacyRequest(request)
 }
