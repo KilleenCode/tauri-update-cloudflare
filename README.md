@@ -9,6 +9,9 @@
 
 Much credit to [@lemarier](https://github.com/lemarier) for the underlying logic at https://github.com/lemarier/updater-deno
 
+## Tauri Version Support
+Currently compatable with Tauri v1.0.0-RC4 and below. Future facing Tauri support [in-progress!](https://github.com/KilleenCode/tauri-update-cloudflare/issues/5)
+
 ## Cloudflare Wrangler
 
 ### 👩 💻 Developing
