@@ -2,6 +2,11 @@
 
 [![Deploy to Cloudflare Workers](https://deploy.workers.cloudflare.com/button)](https://deploy.workers.cloudflare.com/?url=https://github.com/killeencode/tauri-update-cloudflare)
 
+## One-Click Deploy
+1. Click the button above, let Cloudflare walk you through: it's easy!
+2. Go to your forked repository, edit `wrangler.toml`:
+  -  Update `GITHUB_ACCOUNT` and `GITHUB_REPO` to point to the Tauri project you're publishing releases from
+
 Much credit to [@lemarier](https://github.com/lemarier) for the underlying logic at https://github.com/lemarier/updater-deno
 
 ## Cloudflare Wrangler
