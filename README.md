@@ -10,9 +10,13 @@
 Much credit to [@lemarier](https://github.com/lemarier) for the underlying logic at https://github.com/lemarier/updater-deno
 
 ## Tauri Version Support
-Tauri >= v1.0.0-rc5 : use `https://your-update-server.com/v1` route
+### Tauri >= v1.0.0-rc5:
 
-Legacy: use `https://your-update-server.com/`
+use `https://your-update-server.com/v1` route
+For example usage, see [Brancato config](https://github.com/KilleenCode/brancato/blob/main/src-tauri/tauri.conf.json#L55)
+
+### Legacy
+use `https://your-update-server.com/`
 
 ## Cloudflare Wrangler
 
