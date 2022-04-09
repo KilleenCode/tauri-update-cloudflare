@@ -11,6 +11,7 @@ Much credit to [@lemarier](https://github.com/lemarier) for the underlying logic
 
 ## Tauri Version Support
 Tauri >= v1.0.0-rc5 : use `https://your-update-server.com/v1` route
+
 Legacy: use `https://your-update-server.com/`
 
 ## Cloudflare Wrangler
