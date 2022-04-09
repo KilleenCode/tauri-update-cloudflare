@@ -13,6 +13,7 @@ Much credit to [@lemarier](https://github.com/lemarier) for the underlying logic
 ### Tauri >= v1.0.0-rc5:
 
 use `https://your-update-server.com/v1` route
+
 For example usage, see [Brancato config](https://github.com/KilleenCode/brancato/blob/main/src-tauri/tauri.conf.json#L55)
 
 ### Legacy
