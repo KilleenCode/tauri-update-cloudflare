@@ -7,6 +7,9 @@ export const getReleases = async (request: Request): Promise<Response> => {
     Accept: 'application/vnd.github.preview',
     'User-Agent': request.headers.get('User-Agent') as string,
   })
+
+  if (GITHUB_TOKEN) headers.set('Authorization', `token ${GITHUB_TOKEN}`)
+
   return await fetch(reqUrl.toString(), {
     method: 'GET',
     headers,
