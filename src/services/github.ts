@@ -8,7 +8,7 @@ export const getReleases = async (request: Request): Promise<Response> => {
     'User-Agent': request.headers.get('User-Agent') as string,
   })
 
-  if (GITHUB_TOKEN) headers.set('Authorization', `token ${GITHUB_TOKEN}`)
+  if (GITHUB_TOKEN?.length) headers.set('Authorization', `token ${GITHUB_TOKEN}`)
 
   return await fetch(reqUrl.toString(), {
     method: 'GET',

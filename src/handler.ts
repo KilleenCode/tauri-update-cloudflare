@@ -10,7 +10,7 @@ import { sanitizeVersion } from './utils/versioning'
 declare global {
   const GITHUB_ACCOUNT: string
   const GITHUB_REPO: string
-  const GITHUB_TOKEN: string | undefined
+  const GITHUB_TOKEN: string
 }
 
 const responses = {
