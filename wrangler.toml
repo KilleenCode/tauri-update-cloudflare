@@ -9,6 +9,7 @@ compatibility_date = "2022-03-26"
 [vars]
 GITHUB_ACCOUNT = 'killeencode'
 GITHUB_REPO = 'brancato'
+GITHUB_TOKEN = '' # Optional - used with private repos
 
 [build]
 command = "npm install && npm run build"

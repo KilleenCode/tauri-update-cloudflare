@@ -37,3 +37,8 @@ This template comes with jest tests which simply test that the request handler c
 `wrangler publish`
 
 For information on how to preview and publish your worker, please see the [Wrangler docs](https://developers.cloudflare.com/workers/tooling/wrangler/commands/#publish).
+
+
+## Private repos
+
+In order to work with private repos you need to set `GITHUB_TOKEN` variable to your `wrangler.toml` file. You can create a [personal access token here](https://github.com/settings/tokens/new), create it with the repo permissions.
