@@ -22,10 +22,8 @@ const SendJSON = (data: Record<string, unknown>) => {
 const responses = {
   NotFound: () => new Response('Not found', { status: 404 }),
   NoContent: () => new Response(null, { status: 204 }),
-  SendUpdate: (data: TauriUpdateResponse) =>
-    SendJSON(data),
-  SendJSON
-
+  SendUpdate: (data: TauriUpdateResponse) => SendJSON(data),
+  SendJSON,
 }
 
 type RequestPathParts = [
@@ -66,8 +64,10 @@ const handleV1Request = async (request: Request) => {
   }
 
   const signature = await findAssetSignature(match.name, release.assets)
-  const proxy = GITHUB_TOKEN?.length;
-  const downloadURL = proxy ? createProxiedFileUrl(match.browser_download_url, request) : match.browser_download_url
+  const proxy = GITHUB_TOKEN?.length
+  const downloadURL = proxy
+    ? createProxiedFileUrl(match.browser_download_url, request)
+    : match.browser_download_url
   const data: TauriUpdateResponse = {
     url: downloadURL,
     version: remoteVersion,
@@ -80,10 +80,10 @@ const handleV1Request = async (request: Request) => {
 }
 
 const createProxiedFileUrl = (downloadURL: string, request: Request) => {
-
   const fileName = downloadURL.split('/')?.at(-1)
-  if (!fileName) { throw new Error('Could not get file name from download URL') }
-
+  if (!fileName) {
+    throw new Error('Could not get file name from download URL')
+  }
 
   const path = new URL(request.url)
   const root = `${path.protocol}//${path.host}`
@@ -93,27 +93,44 @@ const createProxiedFileUrl = (downloadURL: string, request: Request) => {
 
 const getLatestAssets = async (request: Request) => {
   const fileName = request.url.split('/')?.at(-1)
-  if (!fileName) { throw new Error('Could not get file name from download URL') }
-
+  if (!fileName) {
+    throw new Error('Could not get file name from download URL')
+  }
   const release = await getLatestRelease(request)
-  const downloadPath = release.assets.find(({ name }) => name === fileName)?.browser_download_url
+  console.log(release.assets[0].name)
+  const asset = release.assets.find(({ name }) => name === fileName)
 
-  if (!downloadPath) { throw new Error('Could not get file path from download URL') }
+  if (!asset) {
+    throw new Error('Could not get file path from download URL')
+  }
 
-  const { readable, writable } = new TransformStream();
-  const file_response = await fetch(downloadPath, {
-    method: 'GET',
-    redirect: 'follow'
-  })
+  const { readable, writable } = new TransformStream()
 
-  file_response?.body?.pipeTo(writable);
-  return new Response(readable, file_response);
-
+  let file_response
+  if (GITHUB_TOKEN?.length) {
+    const headers = new Headers({
+      Accept: 'application/octet-stream',
+      'User-Agent': request.headers.get('User-Agent') as string,
+      Authorization: `token ${GITHUB_TOKEN}`,
+      'X-GitHub-Api-Version': '2022-11-28',
+    })
+    file_response = await fetch(asset.url, {
+      method: 'GET',
+      redirect: 'follow',
+      headers,
+    })
+  } else {
+    file_response = await fetch(asset.browser_download_url, {
+      method: 'GET',
+      redirect: 'follow',
+    })
+  }
+  file_response?.body?.pipeTo(writable)
+  return new Response(readable, file_response)
 }
 
 export async function handleRequest(request: Request): Promise<Response> {
   const path = new URL(request.url).pathname
-
 
   if (path.includes('/latest')) {
     return getLatestAssets(request)

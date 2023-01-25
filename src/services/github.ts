@@ -1,4 +1,10 @@
-export type Asset = { name: string; browser_download_url: string }
+export type Asset = {
+  name: string
+  browser_download_url: string
+  url: string
+  id: number
+  label: string
+}
 export const getReleases = async (request: Request): Promise<Response> => {
   const reqUrl = new URL(
     `https://api.github.com/repos/${GITHUB_ACCOUNT}/${GITHUB_REPO}/releases/latest`,
@@ -8,7 +14,8 @@ export const getReleases = async (request: Request): Promise<Response> => {
     'User-Agent': request.headers.get('User-Agent') as string,
   })
 
-  if (GITHUB_TOKEN?.length) headers.set('Authorization', `token ${GITHUB_TOKEN}`)
+  if (GITHUB_TOKEN?.length)
+    headers.set('Authorization', `token ${GITHUB_TOKEN}`)
 
   return await fetch(reqUrl.toString(), {
     method: 'GET',
