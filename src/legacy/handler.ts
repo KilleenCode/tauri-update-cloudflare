@@ -40,7 +40,7 @@ export const handleLegacyRequest = async (
     }
 
     // try to find signature for this asset
-    const signature = await findAssetSignature(name, release.assets)
+    const signature = await findAssetSignature(name, release.assets, request)
     const data: TauriUpdateResponse = {
       url: browser_download_url,
       version: remoteVersion,
