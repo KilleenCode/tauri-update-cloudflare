@@ -1,12 +1,8 @@
 name = "tauri-update-server"
-workers_dev = true
-compatibility_date = "2022-03-26"
+compatibility_date = "2024-05-10"
 main = "src/index.ts"
 
 [vars]
 GITHUB_ACCOUNT = 'killeencode'
 GITHUB_REPO = 'brancato'
 GITHUB_TOKEN = '' # Optional - used with private repos
-
-[build]
-command = "npm install && npm run build"
