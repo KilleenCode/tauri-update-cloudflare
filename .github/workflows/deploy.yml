@@ -5,12 +5,15 @@ on:
     branches:
       - main
   repository_dispatch:
+
 jobs:
   deploy:
     runs-on: ubuntu-latest
     name: Deploy
     steps:
-      - uses: actions/checkout@v4
+      - name: Checkout code
+        uses: actions/checkout@v4
+      
       - name: Publish
         uses: cloudflare/wrangler-action@v3
         with:

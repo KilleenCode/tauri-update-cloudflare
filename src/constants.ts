@@ -30,7 +30,7 @@ export const PLATFORM_FILTERS = {
   },
   [AVAILABLE_PLATFORMS.Windows]: {
     extension: 'zip',
-    matches: ['x64', 'x32'],
+    matches: ['x86', 'x64', 'x32'],
   },
   [AVAILABLE_PLATFORMS.Linux]: {
     extension: 'gz',

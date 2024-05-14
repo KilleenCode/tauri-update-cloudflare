@@ -1,9 +1,12 @@
-import { Env } from '../../worker-configuration';
-import { Request, Response, ExecutionContext } from '@cloudflare/workers-types';
+import { Env } from '../../worker-configuration'
+import { Request, Response } from '@cloudflare/workers-types'
 
 export type Asset = { name: string; browser_download_url: string }
 
-export const getReleases = async (request: Request, env: Env, ctx: ExecutionContext): Promise<Response> => {
+export const getReleases = async (
+  request: Request,
+  env: Env,
+): Promise<Response> => {
   const reqUrl = new URL(
     `https://api.github.com/repos/${env.GITHUB_ACCOUNT}/${env.GITHUB_REPO}/releases/latest`,
   )
@@ -12,14 +15,15 @@ export const getReleases = async (request: Request, env: Env, ctx: ExecutionCont
     'User-Agent': request.headers.get('User-Agent') as string,
   })
 
-  if (env.GITHUB_TOKEN?.length) headers.set('Authorization', `token ${env.GITHUB_TOKEN}`)
+  if (env.GITHUB_TOKEN?.length)
+    headers.set('Authorization', `token ${env.GITHUB_TOKEN}`)
 
   const response = await fetch(reqUrl.toString(), {
     method: 'GET',
     headers,
-  });
+  })
 
-  return response;
+  return response
 }
 
 type Release = {
@@ -29,8 +33,11 @@ type Release = {
   published_at: string
 }
 
-export const getLatestRelease = async (request: Request, env: Env, ctx: ExecutionContext): Promise<Release> => {
-  const releases = await getReleases(request, env, ctx)
+export const getLatestRelease = async (
+  request: Request,
+  env: Env,
+): Promise<Release> => {
+  const releases = await getReleases(request, env)
 
   return (await releases.json()) as Release
 }

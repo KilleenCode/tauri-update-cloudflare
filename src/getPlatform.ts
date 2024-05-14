@@ -6,11 +6,11 @@ import {
 } from './constants'
 import { fileExt } from './utils/fileExt'
 
-export const testAsset = (
+export function testAsset(
   target: AVAILABLE_PLATFORMS,
   arch: AVAILABLE_ARCHITECTURES,
   fileName: string,
-): boolean => {
+): boolean {
   const { matches, extension } = PLATFORM_FILTERS[target]
   const arch_matches = ARCH_FILTERS[arch]
   const rightArch =
@@ -18,10 +18,12 @@ export const testAsset = (
 
   // .app gz files don't have arch in the name
   if (!rightArch && target !== AVAILABLE_PLATFORMS.MacOS) {
+    console.error(`File ${fileName} has wrong architecture`)
     return false
   }
 
   if (fileExt(fileName) !== extension) {
+    console.error(`File ${fileName} has wrong extension`)
     return false
   }
 
