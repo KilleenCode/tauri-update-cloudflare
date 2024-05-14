@@ -1,3 +1,5 @@
+MIT License
+
 - Current version of this software: Copyright 2024 Tricities Media Group LLC
 - Original version of this software: Copyright (c) 2022 KilleenCode
 - Template used by the original version: Copyright (c) 2020 Cloudflare, Inc. <wrangler@cloudflare.com>

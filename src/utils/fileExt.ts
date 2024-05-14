@@ -4,9 +4,9 @@
  * @returns file extension
  */
 export function fileExt(filename: string): string {
-  const extName: string = filename.split('.').pop() || ''
-  if (!extName || extName === filename) {
-    throw new Error('No file extension found')
-  }
-  return extName
+    const extName: string = filename.split('.').pop() || '';
+    if (!extName || extName === filename) {
+        throw new Error('No file extension found');
+    }
+    return extName;
 }

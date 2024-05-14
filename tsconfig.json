@@ -1,21 +1,21 @@
 {
-  "compilerOptions": {
-    "outDir": "./dist",
-    "module": "esnext",
-    "target": "esnext",
-    "lib": ["esnext"],
-    "alwaysStrict": true,
-    "strict": true,
-    "preserveConstEnums": true,
-    "moduleResolution": "node",
-    "sourceMap": true,
-    "esModuleInterop": true,
-    "types": [
-      "@cloudflare/workers-types",
-      "@cloudflare/workers-types/experimental",
-      "@cloudflare/vitest-pool-workers"
-    ]
-  },
-  "include": ["src"],
-  "exclude": ["node_modules", "dist"]
+    "compilerOptions": {
+        "outDir": "./dist",
+        "module": "esnext",
+        "target": "esnext",
+        "lib": ["esnext"],
+        "alwaysStrict": true,
+        "strict": true,
+        "preserveConstEnums": true,
+        "moduleResolution": "node",
+        "sourceMap": true,
+        "esModuleInterop": true,
+        "types": [
+            "@cloudflare/workers-types",
+            "@cloudflare/workers-types/experimental",
+            "@cloudflare/vitest-pool-workers"
+        ]
+    },
+    "include": ["src"],
+    "exclude": ["node_modules", "dist"]
 }

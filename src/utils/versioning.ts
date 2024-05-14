@@ -1,5 +1,5 @@
-import semverValid from 'semver/functions/valid'
-import semverGt from 'semver/functions/gt'
+import semverValid from 'semver/functions/valid';
+import semverGt from 'semver/functions/gt';
 
 /**
  * Normalize version string
@@ -7,13 +7,13 @@ import semverGt from 'semver/functions/gt'
  * @returns normalized version string
  */
 export function sanitizeVersion(version: string): string | undefined {
-  // Works with or without v in version
-  const semanticV = version.split('v').pop()
-  if (!semanticV || semanticV.length === 0) {
-    throw new Error('No version found')
-  }
-  return semanticV
+    // Works with or without v in version
+    const semanticV = version.split('v').pop();
+    if (!semanticV || semanticV.length === 0) {
+        throw new Error('No version found');
+    }
+    return semanticV;
 }
 
-export { semverGt }
-export { semverValid }
+export { semverGt };
+export { semverValid };
