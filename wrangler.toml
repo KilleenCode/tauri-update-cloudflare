@@ -6,4 +6,3 @@ main = "src/index.ts"
 [vars]
 GITHUB_ACCOUNT = 'killeencode'
 GITHUB_REPO = 'brancato'
-GITHUB_TOKEN = '' # Optional - used with private repos
