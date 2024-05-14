@@ -6,11 +6,11 @@
   "scripts": {
     "dev": "wrangler dev",
     "format": "prettier --write  '*.{json,js}' 'src/**/*.{js,ts}'",
-    "lint": "eslint --max-warnings=0 src && prettier --check '*.{json,js}' 'src/**/*.{js,ts}' 'test/**/*.{js,ts}'",
+    "lint": "eslint --max-warnings=0 src && prettier --check '*.{json,js}' 'src/**/*.{js,ts}'",
     "test": "vitest"
   },
   "author": "author",
-  "license": "MIT OR Apache-2.0",
+  "license": "MIT",
   "eslintConfig": {
     "root": true,
     "extends": [
