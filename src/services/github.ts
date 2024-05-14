@@ -15,8 +15,8 @@ export const getReleases = async (
     'User-Agent': request.headers.get('User-Agent') as string,
   })
 
-  if (env.GITHUB_TOKEN?.length)
-    headers.set('Authorization', `token ${env.GITHUB_TOKEN}`)
+  if (env.GITHUB_API_TOKEN?.length)
+    headers.set('Authorization', `token ${env.GITHUB_API_TOKEN}`)
 
   const response = await fetch(reqUrl.toString(), {
     method: 'GET',

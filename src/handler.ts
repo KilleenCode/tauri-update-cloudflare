@@ -14,7 +14,7 @@ import { Env } from '../worker-configuration'
 declare global {
   const GITHUB_ACCOUNT: string
   const GITHUB_REPO: string
-  const GITHUB_TOKEN: string
+  const GITHUB_API_TOKEN: string
 }
 
 const SendJSON = (data: Record<string, unknown>) => {
@@ -72,7 +72,7 @@ const handleV1Request = async (
   }
 
   const signature = await findAssetSignature(match.name, release.assets)
-  const proxy = GITHUB_TOKEN?.length
+  const proxy = GITHUB_API_TOKEN?.length
   const downloadURL = proxy
     ? createProxiedFileUrl(request, env, ctx, match.browser_download_url)
     : match.browser_download_url

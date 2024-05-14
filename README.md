@@ -8,13 +8,13 @@ Wrangler.toml variables:
 - `GITHUB_ACCOUNT`: GitHub account name (e.g. `mackenly`)
 - `GITHUB_REPO`: GitHub repository name (e.g. `my-tauri-app`)
 
-This project works with private GitHub repositories. To enable this, you need to set the `GITHUB_TOKEN` secret in your GitHub repository and it will be picked up by the deployment action. Alternatively, add the secret [manually](https://developers.cloudflare.com/workers/configuration/secrets/#add-secrets-to-your-project). This token should have the `repo` permission.
+This project works with private GitHub repositories. To enable this, you need to set the `GITHUB_API_TOKEN` secret in your GitHub repository and it will be picked up by the deployment action. Alternatively, add the secret [manually](https://developers.cloudflare.com/workers/configuration/secrets/#add-secrets-to-your-project) for manual deployments. This token should have the `repo` permission. Create a new token [here](https://github.com/settings/tokens/new).
 
 ## Deployment
 ### With CI/CD GitHub Actions
 CI/CD via GitHub Actions is set up to test and lint the code. CD requires the repository owner to set two repository secrets:
 - `CF_API_TOKEN` - Cloudflare API token (requires 'Edit Cloudflare Workers' permission template)
-- `CF_ACCOUNT_ID` - Cloudflare account ID
+- `CLOUDFLARE_ACCOUNT_ID` - Cloudflare account ID
 
 ### Manual Deployment
 1. Install dependencies: `npm install` and ensure `wrangler` [is installed](https://developers.cloudflare.com/workers/wrangler/install-and-update/).
