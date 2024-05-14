@@ -18,7 +18,7 @@ jobs:
         uses: cloudflare/wrangler-action@v3
         with:
           apiToken: ${{ secrets.CF_API_TOKEN }}
+          accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
           secrets: ${{ secrets.GITHUB_API_TOKEN != '' && 'GITHUB_API_TOKEN' || '' }}
         env:
-          CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
           GITHUB_API_TOKEN: ${{ secrets.GITHUB_API_TOKEN }}
