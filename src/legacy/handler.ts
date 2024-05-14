@@ -4,13 +4,14 @@ import { Asset, findAssetSignature, getReleases } from '../services/github'
 import { TauriUpdateResponse } from '../types'
 import { sanitizeVersion, semverGt, semverValid } from '../utils/versioning'
 
-export const handleLegacyRequest = async (
-  request: Request,
-): Promise<Response> => {
+import { Env } from '../../worker-configuration';
+import { Request, ExecutionContext } from '@cloudflare/workers-types';
+
+export async function handleLegacyRequest(request: Request, env: Env, ctx: ExecutionContext): Promise<Response> {
   const path = new URL(request.url).pathname
   const [platform, version] = path.slice(1).split('/')
 
-  const releases = await getReleases(request)
+  const releases = await getReleases(request, env, ctx)
 
   const release = (await releases.clone().json()) as {
     tag_name: string

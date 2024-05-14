@@ -7,6 +7,10 @@ import { findAssetSignature, getLatestRelease } from './services/github'
 import { TauriUpdateResponse } from './types'
 import { sanitizeVersion } from './utils/versioning'
 
+import { Request, ExecutionContext } from '@cloudflare/workers-types';
+import { WritableStream as WebWritableStream } from 'node:stream/web';
+import { Env } from '../worker-configuration';
+
 declare global {
   const GITHUB_ACCOUNT: string
   const GITHUB_REPO: string
@@ -34,7 +38,7 @@ type RequestPathParts = [
   AVAILABLE_ARCHITECTURES,
   string,
 ]
-const handleV1Request = async (request: Request) => {
+const handleV1Request = async (request: Request, env: Env, ctx: ExecutionContext) => {
   const path = new URL(request.url).pathname
   const [, target, arch, appVersion] = path
     .slice(1)
@@ -43,7 +47,7 @@ const handleV1Request = async (request: Request) => {
   if (!target || !arch || !appVersion || !semverValid(appVersion)) {
     return responses.NotFound()
   }
-  const release = await getLatestRelease(request)
+  const release = await getLatestRelease(request, env, ctx)
 
   const remoteVersion = sanitizeVersion(release.tag_name.toLowerCase())
   if (!remoteVersion || !semverValid(remoteVersion)) {
@@ -67,7 +71,7 @@ const handleV1Request = async (request: Request) => {
 
   const signature = await findAssetSignature(match.name, release.assets)
   const proxy = GITHUB_TOKEN?.length;
-  const downloadURL = proxy ? createProxiedFileUrl(match.browser_download_url, request) : match.browser_download_url
+  const downloadURL = proxy ? createProxiedFileUrl(request, env, ctx, match.browser_download_url) : match.browser_download_url
   const data: TauriUpdateResponse = {
     url: downloadURL,
     version: remoteVersion,
@@ -79,7 +83,7 @@ const handleV1Request = async (request: Request) => {
   return responses.SendUpdate(data)
 }
 
-const createProxiedFileUrl = (downloadURL: string, request: Request) => {
+const createProxiedFileUrl = (request: Request, env: Env, ctx: ExecutionContext, downloadURL: string) => {
 
   const fileName = downloadURL.split('/')?.at(-1)
   if (!fileName) { throw new Error('Could not get file name from download URL') }
@@ -91,32 +95,37 @@ const createProxiedFileUrl = (downloadURL: string, request: Request) => {
   return new URL(`/latest/${fileName}`, root).toString()
 }
 
-const getLatestAssets = async (request: Request) => {
+const getLatestAssets = async (request: Request, env: Env, ctx: ExecutionContext) => {
   const fileName = request.url.split('/')?.at(-1)
   if (!fileName) { throw new Error('Could not get file name from download URL') }
 
-  const release = await getLatestRelease(request)
+  const release = await getLatestRelease(request, env, ctx)
   const downloadPath = release.assets.find(({ name }) => name === fileName)?.browser_download_url
 
   if (!downloadPath) { throw new Error('Could not get file path from download URL') }
 
-  const { readable, writable } = new TransformStream();
+  const { readable } = new TransformStream<Uint8Array, Uint8Array>();
   const file_response = await fetch(downloadPath, {
     method: 'GET',
     redirect: 'follow'
   })
 
-  file_response?.body?.pipeTo(writable);
-  return new Response(readable, file_response);
+  if (file_response.body) {
+    const webWritableStream = new WebWritableStream();
+    await file_response.body.pipeTo(webWritableStream);
+    return new Response(readable, file_response);
+  }
 
+  throw new Error('Could not get file body from download URL')
 }
 
-export async function handleRequest(request: Request): Promise<Response> {
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+export async function handleRequest(request: Request, env: Env, ctx: ExecutionContext): Promise<Response> {
   const path = new URL(request.url).pathname
 
 
   if (path.includes('/latest')) {
-    return getLatestAssets(request)
+    return getLatestAssets(request, env, ctx)
   }
   const version = path.slice(1).split('/')[0]
 
@@ -124,9 +133,9 @@ export async function handleRequest(request: Request): Promise<Response> {
     switch (version) {
       case 'v1':
       default:
-        return handleV1Request(request)
+        return handleV1Request(request, env, ctx)
     }
   }
 
-  return handleLegacyRequest(request)
+  return handleLegacyRequest(request, env, ctx)
 }

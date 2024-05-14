@@ -1,5 +1,9 @@
-import { handleRequest } from './handler'
+import { handleRequest } from './handler';
+import { Request, ExecutionContext } from '@cloudflare/workers-types';
+import { Env } from '../worker-configuration';
 
-addEventListener('fetch', (event) => {
-  event.respondWith(handleRequest(event.request))
-})
+export default {
+  async fetch(request: Request, env: Env, ctx: ExecutionContext) {
+    return handleRequest(request, env, ctx);
+  },
+};
