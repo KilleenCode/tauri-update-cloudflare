@@ -5,17 +5,16 @@ import { TauriUpdateResponse } from '../types';
 import { sanitizeVersion, semverGt, semverValid } from '../utils/versioning';
 
 import { Env } from '../../worker-configuration';
-import { Request, ExecutionContext } from '@cloudflare/workers-types';
+import { Request } from '@cloudflare/workers-types';
 
 export async function handleLegacyRequest(
     request: Request,
-    env: Env,
-    ctx: ExecutionContext
+    env: Env
 ): Promise<Response> {
     const path = new URL(request.url).pathname;
     const [platform, version] = path.slice(1).split('/');
 
-    const releases = await getReleases(request, env, ctx);
+    const releases = await getReleases(request, env);
 
     const release = (await releases.clone().json()) as {
         tag_name: string;

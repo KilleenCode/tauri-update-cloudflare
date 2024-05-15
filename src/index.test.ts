@@ -4,7 +4,6 @@ import {
 } from 'cloudflare:test';
 import { describe, it, expect } from 'vitest';
 import { Env } from '../worker-configuration';
-// Could import any other source file/function here
 import worker from '../src';
 
 // For now, you'll need to do something like this to get a correctly-typed
