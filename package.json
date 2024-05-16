@@ -31,7 +31,7 @@
         "ts-loader": "^9.5.1",
         "typescript": "^5.4.5",
         "vitest": "1.3.0",
-        "wrangler": "^3.55.0"
+        "wrangler": "^3.56.0"
     },
     "dependencies": {
         "semver": "^7.6.2"
