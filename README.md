@@ -19,7 +19,7 @@ CI/CD via GitHub Actions is set up to test and lint the code. CD requires the re
 ### Manual Deployment
 1. Install dependencies: `npm install` and ensure `wrangler` [is installed](https://developers.cloudflare.com/workers/wrangler/install-and-update/).
 2. Run `npm run test` to ensure the code is working as expected.
-3. Run `wrangler publish` to deploy the code to Cloudflare Workers.
+3. Run `wrangler deploy` to deploy the code to Cloudflare Workers.
 
 ## Usage with Tauri
 ### Tauri >= v1.0.0-rc5:

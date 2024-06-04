@@ -11,12 +11,6 @@ import { Request, ExecutionContext } from '@cloudflare/workers-types';
 import { WritableStream as WebWritableStream } from 'node:stream/web';
 import { Env } from '../worker-configuration';
 
-declare global {
-    const GITHUB_ACCOUNT: string;
-    const GITHUB_REPO: string;
-    const GITHUB_API_TOKEN: string;
-}
-
 const SendJSON = (data: Record<string, unknown>) => {
     return new Response(JSON.stringify(data), {
         headers: { 'Content-Type': 'application/json; charset=utf-8' }
@@ -49,7 +43,7 @@ const handleV1Request = async (
     if (!target || !arch || !appVersion || !semverValid(appVersion)) {
         return responses.NotFound();
     }
-    const release = await getLatestRelease(request, env, ctx);
+    const release = await getLatestRelease(request, env);
 
     const remoteVersion = sanitizeVersion(release.tag_name.toLowerCase());
     if (!remoteVersion || !semverValid(remoteVersion)) {
@@ -72,7 +66,7 @@ const handleV1Request = async (
     }
 
     const signature = await findAssetSignature(match.name, release.assets);
-    const proxy = GITHUB_API_TOKEN?.length;
+    const proxy = env.GITHUB_API_TOKEN?.length;
     const downloadURL = proxy
         ? createProxiedFileUrl(request, env, ctx, match.browser_download_url)
         : match.browser_download_url;
@@ -107,6 +101,7 @@ const createProxiedFileUrl = (
 const getLatestAssets = async (
     request: Request,
     env: Env,
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     ctx: ExecutionContext
 ) => {
     const fileName = request.url.split('/')?.at(-1);
@@ -114,7 +109,7 @@ const getLatestAssets = async (
         throw new Error('Could not get file name from download URL');
     }
 
-    const release = await getLatestRelease(request, env, ctx);
+    const release = await getLatestRelease(request, env);
     const downloadPath = release.assets.find(
         ({ name }) => name === fileName
     )?.browser_download_url;
@@ -159,5 +154,5 @@ export async function handleRequest(
         }
     }
 
-    return handleLegacyRequest(request, env, ctx);
+    return handleLegacyRequest(request, env);
 }
