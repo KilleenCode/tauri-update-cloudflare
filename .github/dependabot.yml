@@ -9,3 +9,13 @@ updates:
     directory: "/" # Location of package manifests
     schedule:
       interval: "weekly"
+    groups:
+      production-dependencies:
+        dependency-types: "production"
+      development-dependencies:
+        dependency-types: "development"
+    labels:
+      - "npm"
+      - "dependencies"
+    assignees:
+      - "mackenly"
