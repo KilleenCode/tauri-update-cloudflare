@@ -1,3 +1,7 @@
+# DEPRECATED!
+Please see the actively maintained fork over at https://github.com/mackenly/tauri-update-cloudflare
+
+
 # Tauri Update Server: Cloudflare
 
 [![Deploy to Cloudflare Workers](https://deploy.workers.cloudflare.com/button)](https://deploy.workers.cloudflare.com/?url=https://github.com/killeencode/tauri-update-cloudflare)
